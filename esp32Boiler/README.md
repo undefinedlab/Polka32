@@ -1,7 +1,5 @@
 # Web3 ESP32/Arduino Ethereum Smart Contract Integration
 
-This project recreates the complete implementation from Takahiro Okada's Medium article: ["Handle smart contract on Ethereum with Arduino or ESP32"](https://medium.com/@takahirookada/handle-smart-contract-on-ethereum-with-arduino-or-esp32-1bb5cbaddbf4)
-
 ## Overview
 
 This project demonstrates how to:
@@ -185,7 +183,6 @@ contract SimpleStorage {
 ## Resources
 
 - [Web3E Library Documentation](https://github.com/AlphaWallet/Web3E)
-- [Original Medium Article](https://medium.com/@takahirookada/handle-smart-contract-on-ethereum-with-arduino-or-esp32-1bb5cbaddbf4)
 - [ESP32 Arduino Core](https://github.com/espressif/arduino-esp32)
 - [PlatformIO Documentation](https://docs.platformio.org/)
 
@@ -195,12 +192,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Acknowledgments
 
-- Takahiro Okada for the original Medium article
-- AlphaWallet team for the Web3E library
+- Takahiro Okada
+- AlphaWallet team
 - ESP32 Arduino community
 - Ethereum development community
-
-## Donations
-
-If this project helps you, consider supporting the original Web3E library:
-`0xbc8dAfeacA658Ae0857C80D8Aa6dE4D487577c63` 
