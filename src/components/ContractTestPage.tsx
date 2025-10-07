@@ -330,28 +330,9 @@ const ContractTestPage = ({ onClose }: ContractTestPageProps): React.ReactElemen
           </div>
         </div>
 
+
         {/* Your Devices */}
-        {userDevices && Array.isArray(userDevices) && userDevices.length > 0 && (
-           <div className="function-card">
-             <h3>📱 Your Devices ({userDevices.length})</h3>
-             <div className="devices-list">
-               {userDevices.map((device: any, index: number) => (
-                 <div key={index} className="device-item">
-                   <div className="device-info">
-                     <span className="device-name">{device.name || 'Unknown Device'}</span>
-                     <span className="device-index">Index: {index}</span>
-                     <span className="device-timestamp">Last Update: {String(device.time ? new Date(Number(device.time) * 1000).toLocaleString() : 'Unknown')}</span>
-                   </div>
-                   <div className="device-status">
-                     <span className="status-badge active">
-                       Active
-                     </span>
-                   </div>
-                 </div>
-               ))}
-             </div>
-           </div>
-         )}
+      
       </div>
 
        {/* Transaction List */}
