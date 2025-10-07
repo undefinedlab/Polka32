@@ -144,16 +144,17 @@ const ContractTestPage = ({ onClose }: ContractTestPageProps) => {
 
   useEffect(() => {
     if (error) {
+      const errorMessage = (error as any)?.message || 'Transaction failed';
       if (hash) {
         setTransactions(prev => 
           prev.map(tx => 
             tx.hash === hash 
-              ? { ...tx, status: 'error' as const, error: error.message }
+              ? { ...tx, status: 'error' as const, error: errorMessage }
               : tx
           )
         );
       }
-      setFeedback({ type: 'error', message: error.message || 'Transaction failed' });
+      setFeedback({ type: 'error', message: errorMessage });
       setTimeout(() => setFeedback(null), 5000);
     }
   }, [error, hash]);
@@ -183,7 +184,7 @@ const ContractTestPage = ({ onClose }: ContractTestPageProps) => {
       setFeedback({ type: 'info', message: 'Transaction submitted. Waiting for confirmation...' });
     } catch (err: any) {
       setCurrentFunction('');
-      setFeedback({ type: 'error', message: err.message || 'Failed to add device' });
+      setFeedback({ type: 'error', message: err?.message || 'Failed to add device' });
     }
   };
 
@@ -328,14 +329,14 @@ const ContractTestPage = ({ onClose }: ContractTestPageProps) => {
         </div>
 
          {/* Your Devices */}
-         {userDevices && userDevices.length > 0 && (
+         {userDevices && Array.isArray(userDevices) && userDevices.length > 0 && (
            <div className="function-card">
              <h3>📱 Your Devices ({userDevices.length})</h3>
              <div className="devices-list">
                {userDevices.map((device: any, index: number) => (
                  <div key={index} className="device-item">
                    <div className="device-info">
-                     <span className="device-name">{device.name}</span>
+                     <span className="device-name">{device.name || 'Unknown Device'}</span>
                      <span className="device-index">Index: {index}</span>
                      <span className="device-timestamp">Last Update: {new Date(Number(device.time) * 1000).toLocaleString()}</span>
                    </div>

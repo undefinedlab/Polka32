@@ -1,10 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useReadContract } from 'wagmi';
 
 interface DeviceRegistryProps {
-  contractAddress: string;
-  blockscoutApi: string;
   globalSearchTerm?: string;
 }
 
@@ -44,21 +41,20 @@ interface Transaction {
   };
 }
 
-const DeviceRegistry = ({ contractAddress, blockscoutApi, globalSearchTerm = '' }: DeviceRegistryProps) => {
+const DeviceRegistry = ({ globalSearchTerm = '' }: DeviceRegistryProps) => {
   const [devices, setDevices] = useState<Device[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedDevice, setSelectedDevice] = useState<Device | null>(null);
   const [deviceTransactions, setDeviceTransactions] = useState<Transaction[]>([]);
   const [transactionsLoading, setTransactionsLoading] = useState<boolean>(false);
-  const [deviceLogs, setDeviceLogs] = useState<any[]>([]);
-  const [logsLoading, setLogsLoading] = useState<boolean>(false);
 
   // Polka32 contract address and wallet to fetch devices from
   const POLKA32_CONTRACT = '0x83aC19d72648a87a7ecB6D2913C0B1B7e04b5a31';
   const POLKA32_WALLET = '0x83aC19d72648a87a7ecB6D2913C0B1B7e04b5a31';
 
-  // Contract ABI for Polka32
+  // Contract ABI for Polka32 (unused but kept for reference)
+  /*
   const contractABI = [
     {
       "inputs": [{"internalType": "address", "name": "a", "type": "address"}],
@@ -75,6 +71,7 @@ const DeviceRegistry = ({ contractAddress, blockscoutApi, globalSearchTerm = '' 
       "type": "function"
     }
   ];
+  */
 
   // Contract ABI kept for reference but not actively used
   // const { data: contractDevices, isLoading: contractLoading } = useReadContract({
@@ -136,11 +133,9 @@ const DeviceRegistry = ({ contractAddress, blockscoutApi, globalSearchTerm = '' 
     }
   };
 
-  // Fetch contract logs
+  // Fetch contract logs (simplified - just for logging)
   const fetchContractLogs = async (contractAddress: string) => {
     try {
-      setLogsLoading(true);
-      
       // Use Paseo AssetHub Blockscout API
       const endpoint = `https://blockscout-passet-hub.parity-testnet.parity.io/api/v2/addresses/${contractAddress}/logs`;
       console.log('Fetching contract logs from:', endpoint);
@@ -149,19 +144,11 @@ const DeviceRegistry = ({ contractAddress, blockscoutApi, globalSearchTerm = '' 
       
       if (response.data && response.data.items) {
         console.log('Contract logs fetched:', response.data.items.length);
-        
-        // Get recent logs
-        const recentLogs = response.data.items.slice(0, 15);
-        setDeviceLogs(recentLogs);
       } else {
-        setDeviceLogs([]);
+        console.log('No contract logs found');
       }
-      
-      setLogsLoading(false);
     } catch (err) {
       console.error('Error fetching contract logs:', err);
-      setDeviceLogs([]);
-      setLogsLoading(false);
     }
   };
 
@@ -263,7 +250,6 @@ const DeviceRegistry = ({ contractAddress, blockscoutApi, globalSearchTerm = '' 
   const handleBackClick = () => {
     setSelectedDevice(null);
     setDeviceTransactions([]);
-    setDeviceLogs([]);
   };
 
   if (loading) {
@@ -366,7 +352,7 @@ const DeviceRegistry = ({ contractAddress, blockscoutApi, globalSearchTerm = '' 
             </div>
 
             <div className="device-transactions">
-              <h3>{selectedDevice.walletAddress === CONTRACT_ADDRESS ? 'Contract Transactions' : selectedDevice.walletAddress ? 'Real Wallet Transactions' : 'Recent Transactions'}</h3>
+              <h3>{selectedDevice.walletAddress === POLKA32_CONTRACT ? 'Contract Transactions' : selectedDevice.walletAddress ? 'Real Wallet Transactions' : 'Recent Transactions'}</h3>
               {transactionsLoading ? (
                 <div className="loading">Loading transactions...</div>
               ) : deviceTransactions.length > 0 ? (
