@@ -269,7 +269,7 @@ const ContractTestPage = ({ onClose }: ContractTestPageProps): React.ReactElemen
             type="text"
             placeholder="0x..."
             value={contractAddress}
-            onChange={(e) => setContractAddress(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setContractAddress(e.target.value)}
             className="contract-input"
           />
         </div>
@@ -291,7 +291,7 @@ const ContractTestPage = ({ onClose }: ContractTestPageProps): React.ReactElemen
                 type="text"
                 placeholder="e.g., ESP32-Sensor-01"
                 value={registerForm.name}
-                onChange={(e) => setRegisterForm(prev => ({ ...prev, name: e.target.value }))}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRegisterForm(prev => ({ ...prev, name: e.target.value }))}
               />
             </div>
             <button 
@@ -314,7 +314,7 @@ const ContractTestPage = ({ onClose }: ContractTestPageProps): React.ReactElemen
                 type="number"
                 min="0"
                 value={heartbeatIndex}
-                onChange={(e) => setHeartbeatIndex(Number(e.target.value) || 0)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setHeartbeatIndex(Number(e.target.value) || 0)}
               />
             </div>
             <button 
