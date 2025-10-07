@@ -314,12 +314,15 @@ const ContractTestPage = ({ onClose }: ContractTestPageProps): React.ReactElemen
                 type="number"
                 min="0"
                 value={heartbeatIndex}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setHeartbeatIndex(Number(e.target.value) || 0)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = Number(e.target.value) || 0;
+                  setHeartbeatIndex(value);
+                }}
               />
             </div>
             <button 
               className="function-btn secondary"
-              onClick={handleHeartbeat}
+              onClick={() => handleHeartbeat()}
               disabled={isPending || isConfirming || !isConnected}
             >
               Send Heartbeat
@@ -327,8 +330,8 @@ const ContractTestPage = ({ onClose }: ContractTestPageProps): React.ReactElemen
           </div>
         </div>
 
-         {/* Your Devices */}
-         {userDevices && Array.isArray(userDevices) && userDevices.length > 0 && (
+        {/* Your Devices */}
+        {userDevices && Array.isArray(userDevices) && userDevices.length > 0 && (
            <div className="function-card">
              <h3>📱 Your Devices ({userDevices.length})</h3>
              <div className="devices-list">
