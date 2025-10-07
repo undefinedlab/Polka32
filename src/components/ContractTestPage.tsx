@@ -338,7 +338,7 @@ const ContractTestPage = ({ onClose }: ContractTestPageProps) => {
                    <div className="device-info">
                      <span className="device-name">{device.name || 'Unknown Device'}</span>
                      <span className="device-index">Index: {index}</span>
-                     <span className="device-timestamp">Last Update: {new Date(Number(device.time) * 1000).toLocaleString()}</span>
+                     <span className="device-timestamp">Last Update: {device.time ? new Date(Number(device.time) * 1000).toLocaleString() : 'Unknown'}</span>
                    </div>
                    <div className="device-status">
                      <span className="status-badge active">

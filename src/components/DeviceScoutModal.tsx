@@ -3,12 +3,10 @@ import DeviceRegistry from './DeviceRegistry';
 import './DeviceScoutModal.css';
 
 interface DeviceScoutModalProps {
-  contractAddress: string;
-  blockscoutApi: string;
   onClose: () => void;
 }
 
-const DeviceScoutModal = ({ contractAddress, blockscoutApi, onClose }: DeviceScoutModalProps) => {
+const DeviceScoutModal = ({ onClose }: DeviceScoutModalProps) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   return (
@@ -66,8 +64,6 @@ const DeviceScoutModal = ({ contractAddress, blockscoutApi, onClose }: DeviceSco
       </div>
       
       <DeviceRegistry 
-        contractAddress={contractAddress} 
-        blockscoutApi={blockscoutApi} 
         globalSearchTerm={searchTerm} 
       />
     </div>

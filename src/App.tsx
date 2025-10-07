@@ -10,9 +10,7 @@ import ContractTestPage from './components/ContractTestPage';
 // Styles
 import './App.css';
 
-// Constants
-const POLKA32_CONTRACT = '0x83aC19d72648a87a7ecB6D2913C0B1B7e04b5a31';
-const BLOCKSCOUT_API = 'https://blockscout-passet-hub.parity-testnet.parity.io/api/v2';
+// Constants (moved to individual components as needed)
 
 function App() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
@@ -63,7 +61,7 @@ function App() {
       case 'device-scout':
         return (
           <Modal isOpen={true} onClose={closeModal} title="" size="full">
-            <DeviceScoutModal contractAddress={POLKA32_CONTRACT} blockscoutApi={BLOCKSCOUT_API} onClose={closeModal} />
+            <DeviceScoutModal onClose={closeModal} />
           </Modal>
         );
       case 'contract-test':
