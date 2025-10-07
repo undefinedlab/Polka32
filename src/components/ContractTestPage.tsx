@@ -304,7 +304,6 @@ const ContractTestPage = ({ onClose }: ContractTestPageProps) => {
           </div>
         </div>
 
-        {/* Ping */}
         <div className="function-card">
           <h3>📡 Send Ping</h3>
           <div className="function-form">
@@ -338,7 +337,7 @@ const ContractTestPage = ({ onClose }: ContractTestPageProps) => {
                    <div className="device-info">
                      <span className="device-name">{device.name || 'Unknown Device'}</span>
                      <span className="device-index">Index: {index}</span>
-                     <span className="device-timestamp">Last Update: {device.time ? new Date(Number(device.time) * 1000).toLocaleString() : 'Unknown'}</span>
+                     <span className="device-timestamp">Last Update: {String(device.time ? new Date(Number(device.time) * 1000).toLocaleString() : 'Unknown')}</span>
                    </div>
                    <div className="device-status">
                      <span className="status-badge active">
