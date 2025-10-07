@@ -1,0 +1,75 @@
+# PlatformIO
+.pio/
+.pioenvs/
+.piolibdeps/
+lib/
+.vscode/
+*.tmp
+
+# Build artifacts
+*.bin
+*.elf
+*.hex
+*.map
+
+# IDE files
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Logs
+*.log
+
+# Secrets and configuration (IMPORTANT!)
+# Never commit real private keys or sensitive configuration
+config/secrets.h
+src/secrets.h
+private_keys.txt
+.env
+.env.local
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Node.js (if using for web interface)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor backup files
+*~
+*.swp
+*.swo
+
+# Windows
+*.exe
+*.msi
+
+# macOS
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+
+# Hardware specific
+*.fzz
+
+# Documentation build
+docs/_build/ 

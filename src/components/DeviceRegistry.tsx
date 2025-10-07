@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import DeviceActivity from './DeviceActivity';
+import { useReadContract } from 'wagmi';
 
 interface DeviceRegistryProps {
   contractAddress: string;
@@ -54,69 +54,53 @@ const DeviceRegistry = ({ contractAddress, blockscoutApi, globalSearchTerm = '' 
   const [deviceLogs, setDeviceLogs] = useState<any[]>([]);
   const [logsLoading, setLogsLoading] = useState<boolean>(false);
 
-  // Real Bitogochi wallet address
-  const BITOGOCHI_WALLET = '0x67A71d74e3d0b52996Deb690E623d8C9946Ba5E7';
-  // Contract address to show transactions for
-  const CONTRACT_ADDRESS = '0x2F1AEdd2D80806B0405b44021B0448a8f073f73b';
+  // Polka32 contract address and wallet to fetch devices from
+  const POLKA32_CONTRACT = '0x83aC19d72648a87a7ecB6D2913C0B1B7e04b5a31';
+  const POLKA32_WALLET = '0x83aC19d72648a87a7ecB6D2913C0B1B7e04b5a31';
 
-  // Mock data for demonstration - in a real app, this would come from the blockchain
+  // Contract ABI for Polka32
+  const contractABI = [
+    {
+      "inputs": [{"internalType": "address", "name": "a", "type": "address"}],
+      "name": "get",
+      "outputs": [{"internalType": "struct Polka32.Device[]", "name": "", "type": "tuple[]"}],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "total",
+      "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ];
+
+  // Contract ABI kept for reference but not actively used
+  // const { data: contractDevices, isLoading: contractLoading } = useReadContract({
+  //   address: POLKA32_CONTRACT as `0x${string}`,
+  //   abi: contractABI,
+  //   functionName: 'get',
+  //   args: [POLKA32_WALLET],
+  //   query: { enabled: true }
+  // });
+
+  // Single mock device showing transactions from the Polka32 wallet
   const mockDevices: Device[] = [
     {
-      id: '0x1a2b3c4d5e6f',
-      name: 'Bitogochi Device',
-      manufacturer: 'Bitogochi Labs',
-      model: 'BT-2023',
-      owner: BITOGOCHI_WALLET,
-      walletAddress: CONTRACT_ADDRESS, // Use contract address for transactions
+      id: 'polka32-main-device',
+      name: 'Polka32 IoT Gateway',
+      manufacturer: 'Polka32 Labs',
+      model: 'ESP32-DevKit-V1',
+      owner: '0x83aC19d72648a87a7ecB6D2913C0B1B7e04b5a31',
+      walletAddress: '0x83aC19d72648a87a7ecB6D2913C0B1B7e04b5a31',
       status: 'active',
-      lastSeen: new Date().toISOString(),
+      lastSeen: new Date(Date.now() - 1000 * 60 * 8).toISOString(), // 8 minutes ago
       verificationStatus: 'verified',
-      ipfsHash: 'QmT78zSuBmuS4z925WZfrqQ1qHaJ56DQaTfyMUF7F8ff5o',
+      ipfsHash: 'QmPolka32MainDevice',
       isReal: true,
-      description: 'Blockchain-connected virtual pet device with LED display under light control. Tracks real contract transactions.',
-      type: 'gaming'
-    },
-    {
-      id: '0x2b3c4d5e6f7g',
-      name: 'Surveillance Camera',
-      manufacturer: 'SecureVision',
-      model: 'SV-100',
-      owner: '0x2F1AEdd2D80806B0405b44021B0448a8f073f73b',
-      status: 'active',
-      lastSeen: new Date().toISOString(),
-      verificationStatus: 'verified',
-      ipfsHash: 'QmT78zSuBmuS4z925WZfrqQ1qHaJ56DQaTfyMUF7F8ff5p',
-      isReal: false,
-      description: 'Blockchain-secured surveillance camera with tamper-proof footage storage',
-      type: 'security'
-    },
-    {
-      id: '0x3c4d5e6f7g8h',
-      name: 'Humidity Sensor',
-      manufacturer: 'GreenSense',
-      model: 'HS-2023',
-      owner: contractAddress,
-      status: 'active',
-      lastSeen: new Date(Date.now() - 86400000).toISOString(),
-      verificationStatus: 'verified',
-      ipfsHash: 'QmT78zSuBmuS4z925WZfrqQ1qHaJ56DQaTfyMUF7F8ff5q',
-      isReal: false,
-      description: 'Environmental humidity sensor with blockchain data verification',
-      type: 'environmental'
-    },
-    {
-      id: '0x4d5e6f7g8h9i',
-      name: 'Solar Panel Controller',
-      manufacturer: 'SolarLogic',
-      model: 'SP-500',
-      owner: '0x67A71d74e3d0b52996Deb690E623d8C9946Ba5E7',
-      status: 'active',
-      lastSeen: new Date(Date.now() - 172800000).toISOString(),
-      verificationStatus: 'verified',
-      ipfsHash: 'QmT78zSuBmuS4z925WZfrqQ1qHaJ56DQaTfyMUF7F8ff5r',
-      isReal: false,
-      description: 'Solar panel controller with energy production tracking on blockchain',
-      type: 'energy'
+      description: 'Primary ESP32 IoT gateway device connected to Polka32 blockchain network. Click to view live transactions from 0x83aC19d72648a87a7ecB6D2913C0B1B7e04b5a31',
+      type: 'gateway'
     }
   ];
 
@@ -125,7 +109,8 @@ const DeviceRegistry = ({ contractAddress, blockscoutApi, globalSearchTerm = '' 
     try {
       setTransactionsLoading(true);
       
-      const endpoint = `${blockscoutApi}/addresses/${walletAddress}/transactions`;
+      // Use Paseo AssetHub Blockscout API
+      const endpoint = `https://blockscout-passet-hub.parity-testnet.parity.io/api/v2/addresses/${walletAddress}/transactions`;
       console.log('Fetching wallet transactions from:', endpoint);
       
       const response = await axios.get(endpoint);
@@ -156,7 +141,8 @@ const DeviceRegistry = ({ contractAddress, blockscoutApi, globalSearchTerm = '' 
     try {
       setLogsLoading(true);
       
-      const endpoint = `${blockscoutApi}/addresses/${contractAddress}/logs`;
+      // Use Paseo AssetHub Blockscout API
+      const endpoint = `https://blockscout-passet-hub.parity-testnet.parity.io/api/v2/addresses/${contractAddress}/logs`;
       console.log('Fetching contract logs from:', endpoint);
       
       const response = await axios.get(endpoint);
@@ -180,39 +166,30 @@ const DeviceRegistry = ({ contractAddress, blockscoutApi, globalSearchTerm = '' 
   };
 
   useEffect(() => {
-    const fetchDevices = async () => {
-      try {
-        setLoading(true);
-        // In a real app, we would fetch from the blockchain via the API
-        // For now, we'll use mock data
-        setTimeout(() => {
-          setDevices(mockDevices);
-          setLoading(false);
-        }, 1000);
-      } catch (err) {
-        console.error('Error fetching devices:', err);
-        setError('Failed to fetch devices. Please try again later.');
-        setLoading(false);
-      }
-    };
+    // Simply use the mock device - no contract complexity
+    setLoading(false);
+    setDevices(mockDevices);
+    setError(null);
+  }, []);
 
-    fetchDevices();
-  }, [contractAddress, blockscoutApi]);
-
-  // Check if search term is a wallet address and auto-open Bitogochi if it matches
+  // Check if search term matches Polka32 wallet and auto-open device
   useEffect(() => {
     if (globalSearchTerm && (
-      globalSearchTerm.toLowerCase() === BITOGOCHI_WALLET.toLowerCase() ||
-      globalSearchTerm.toLowerCase() === CONTRACT_ADDRESS.toLowerCase()
+      globalSearchTerm.toLowerCase() === POLKA32_WALLET.toLowerCase() ||
+      globalSearchTerm.toLowerCase() === POLKA32_CONTRACT.toLowerCase() ||
+      globalSearchTerm.toLowerCase().includes('polka32')
     )) {
-      const bitogochi = mockDevices.find(device => device.walletAddress === CONTRACT_ADDRESS);
-      if (bitogochi && !selectedDevice) {
-        setSelectedDevice(bitogochi);
-        fetchWalletTransactions(CONTRACT_ADDRESS);
-        fetchContractLogs(CONTRACT_ADDRESS);
+      const polka32Device = devices.find(device => 
+        device.walletAddress === POLKA32_CONTRACT ||
+        device.owner === POLKA32_WALLET
+      );
+      if (polka32Device && !selectedDevice) {
+        setSelectedDevice(polka32Device);
+        fetchWalletTransactions(POLKA32_CONTRACT);
+        fetchContractLogs(POLKA32_CONTRACT);
       }
     }
-  }, [globalSearchTerm, selectedDevice]);
+  }, [globalSearchTerm, selectedDevice, devices]);
 
   const formatTimestamp = (timestamp: string) => {
     const date = new Date(timestamp);
@@ -276,8 +253,8 @@ const DeviceRegistry = ({ contractAddress, blockscoutApi, globalSearchTerm = '' 
     // Fetch real transactions if this device has a wallet address
     if (device.walletAddress) {
       fetchWalletTransactions(device.walletAddress);
-      // Also fetch logs if this is the contract address
-      if (device.walletAddress === CONTRACT_ADDRESS) {
+      // Also fetch logs if this is the Polka32 contract address
+      if (device.walletAddress === POLKA32_CONTRACT) {
         fetchContractLogs(device.walletAddress);
       }
     }
@@ -337,7 +314,7 @@ const DeviceRegistry = ({ contractAddress, blockscoutApi, globalSearchTerm = '' 
                   <span className="detail-label">Owner:</span>
                   <span className="detail-value">
                     <a 
-                      href={`https://arbitrum-sepolia.blockscout.com/address/${selectedDevice.owner}`}
+                      href={`https://blockscout-passet-hub.parity-testnet.parity.io/address/${selectedDevice.owner}`}
                       target="_blank" 
                       rel="noopener noreferrer"
                     >
@@ -350,7 +327,7 @@ const DeviceRegistry = ({ contractAddress, blockscoutApi, globalSearchTerm = '' 
                     <span className="detail-label">Wallet Address:</span>
                     <span className="detail-value">
                       <a 
-                        href={`https://arbitrum-sepolia.blockscout.com/address/${selectedDevice.walletAddress}`}
+                        href={`https://blockscout-passet-hub.parity-testnet.parity.io/address/${selectedDevice.walletAddress}`}
                         target="_blank" 
                         rel="noopener noreferrer"
                       >
@@ -410,13 +387,13 @@ const DeviceRegistry = ({ contractAddress, blockscoutApi, globalSearchTerm = '' 
                     {deviceTransactions.map((tx, index) => (
                       <tr key={tx.hash || index}>
                         <td>
-                          <a href={`https://arbitrum-sepolia.blockscout.com/tx/${tx.hash}`} target="_blank" rel="noopener noreferrer">
+                          <a href={`https://blockscout-passet-hub.parity-testnet.parity.io/tx/${tx.hash}`} target="_blank" rel="noopener noreferrer">
                             {tx.hash.substring(0, 8)}...{tx.hash.substring(tx.hash.length - 6)}
                           </a>
                         </td>
                         <td>
                           <a 
-                            href={`https://arbitrum-sepolia.blockscout.com/block/${tx.block || ''}`}
+                            href={`https://blockscout-passet-hub.parity-testnet.parity.io/block/${tx.block || ''}`}
                             target="_blank" 
                             rel="noopener noreferrer"
                           >
@@ -427,7 +404,7 @@ const DeviceRegistry = ({ contractAddress, blockscoutApi, globalSearchTerm = '' 
                         <td>
                           {tx.from?.hash ? (
                             <a 
-                              href={`https://arbitrum-sepolia.blockscout.com/address/${tx.from.hash}`}
+                              href={`https://blockscout-passet-hub.parity-testnet.parity.io/address/${tx.from.hash}`}
                               target="_blank" 
                               rel="noopener noreferrer"
                             >
@@ -438,7 +415,7 @@ const DeviceRegistry = ({ contractAddress, blockscoutApi, globalSearchTerm = '' 
                         <td>
                           {tx.to?.hash ? (
                             <a 
-                              href={`https://arbitrum-sepolia.blockscout.com/address/${tx.to.hash}`}
+                              href={`https://blockscout-passet-hub.parity-testnet.parity.io/address/${tx.to.hash}`}
                               target="_blank" 
                               rel="noopener noreferrer"
                             >
@@ -463,97 +440,7 @@ const DeviceRegistry = ({ contractAddress, blockscoutApi, globalSearchTerm = '' 
               )}
             </div>
 
-            {/* Contract Logs Section - Only show for contract addresses */}
-            {selectedDevice.walletAddress === CONTRACT_ADDRESS && (
-              <div className="device-logs">
-                <h3>Contract Logs</h3>
-                {logsLoading ? (
-                  <div className="loading">Loading contract logs...</div>
-                ) : deviceLogs.length > 0 ? (
-                  <table className="logs-table">
-                    <thead>
-                      <tr>
-                        <th>Tx Hash</th>
-                        <th>Block</th>
-                        <th>Time</th>
-                        <th>Event</th>
-                        <th>Topics</th>
-                        <th>Data</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {deviceLogs.map((log, index) => (
-                        <tr key={`${log.transaction_hash || 'unknown'}-${index}`}>
-                          <td>
-                            {log.transaction_hash ? (
-                              <a href={`https://arbitrum-sepolia.blockscout.com/tx/${log.transaction_hash}`} target="_blank" rel="noopener noreferrer">
-                                {log.transaction_hash.substring(0, 8)}...{log.transaction_hash.substring(log.transaction_hash.length - 6)}
-                              </a>
-                            ) : (
-                              'Unknown'
-                            )}
-                          </td>
-                          <td>
-                            {log.block_number ? (
-                              <a 
-                                href={`https://arbitrum-sepolia.blockscout.com/block/${log.block_number}`}
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                              >
-                                {log.block_number}
-                              </a>
-                            ) : (
-                              'Unknown'
-                            )}
-                          </td>
-                          <td>{log.block_timestamp ? formatTimestamp(log.block_timestamp) : 'Unknown'}</td>
-                          <td>{log.decoded?.method_call || (log.topics?.[0] ? log.topics[0].substring(0, 10) + '...' : 'Unknown')}</td>
-                          <td>
-                            <div className="topics-list">
-                              {log.topics?.slice(0, 2).map((topic: string, i: number) => (
-                                topic ? (
-                                  <div key={i} className="topic-item">
-                                    {topic.substring(0, 10)}...
-                                  </div>
-                                ) : null
-                              )) || <div className="topic-item">No topics</div>}
-                            </div>
-                          </td>
-                          <td>
-                            <div className="log-data">
-                              {log.data ? `${log.data.substring(0, 20)}...` : 'No data'}
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                ) : (
-                  <div className="no-logs">
-                    No contract logs found for this address.
-                  </div>
-                )}
-              </div>
-            )}
 
-            {/* Device Activity Section - Pass the same transaction data */}
-            <DeviceActivity 
-              contractAddress={contractAddress} 
-              blockscoutApi={blockscoutApi} 
-              deviceTransactions={deviceTransactions}
-              selectedDevice={selectedDevice}
-              transactionsLoading={transactionsLoading}
-            />
-          </div>
-          
-          <div className="device-actions-panel">
-            <h3>Quick Actions</h3>
-            <button className="action-button primary">View All Transactions</button>
-            <button className="action-button secondary">Device Metrics</button>
-            <button className="action-button secondary">Activity Log</button>
-            <button className="action-button">Manage Access</button>
-            <button className="action-button">Update Firmware</button>
-            <button className="action-button">Export Data</button>
           </div>
         </div>
       </div>
@@ -608,7 +495,7 @@ const DeviceRegistry = ({ contractAddress, blockscoutApi, globalSearchTerm = '' 
                 <div className="owner-info">
                   <span className="owner-label">Owner:</span>
                   <a 
-                    href={`https://arbitrum-sepolia.blockscout.com/address/${device.owner}`}
+                    href={`https://blockscout-passet-hub.parity-testnet.parity.io/address/${device.owner}`}
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="owner-link"
