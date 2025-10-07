@@ -332,6 +332,12 @@ const ContractTestPage = ({ onClose }: ContractTestPageProps): React.ReactElemen
 
 
         {/* Your Devices */}
+        <div className="function-card">
+          <h3>📱 Your Devices</h3>
+          <div className="devices-count">
+            <span>Total Devices: {userDevices && Array.isArray(userDevices) ? userDevices.length : 0}</span>
+          </div>
+        </div>
       
       </div>
 
