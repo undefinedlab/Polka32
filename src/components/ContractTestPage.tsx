@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAccount, useWriteContract, useReadContract, useWaitForTransactionReceipt } from 'wagmi';
 import './ContractTestPage.css';
 
@@ -15,7 +15,7 @@ interface ContractTestPageProps {
   onClose: () => void;
 }
 
-const ContractTestPage = ({ onClose }: ContractTestPageProps) => {
+const ContractTestPage = ({ onClose }: ContractTestPageProps): React.ReactElement => {
   const { address, isConnected } = useAccount();
   const { writeContract, data: hash, error, isPending } = useWriteContract();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -206,7 +206,7 @@ const ContractTestPage = ({ onClose }: ContractTestPageProps) => {
       setFeedback({ type: 'info', message: 'Ping submitted. Waiting for confirmation...' });
     } catch (err: any) {
       setCurrentFunction('');
-      setFeedback({ type: 'error', message: err.message || 'Failed to send ping' });
+      setFeedback({ type: 'error', message: err?.message || 'Failed to send ping' });
     }
   };
 
@@ -314,7 +314,7 @@ const ContractTestPage = ({ onClose }: ContractTestPageProps) => {
                 type="number"
                 min="0"
                 value={heartbeatIndex}
-                onChange={(e) => setHeartbeatIndex(parseInt(e.target.value) || 0)}
+                onChange={(e) => setHeartbeatIndex(Number(e.target.value) || 0)}
               />
             </div>
             <button 
@@ -322,7 +322,7 @@ const ContractTestPage = ({ onClose }: ContractTestPageProps) => {
               onClick={handleHeartbeat}
               disabled={isPending || isConfirming || !isConnected}
             >
-              {isPending || isConfirming ? 'Processing...' : 'Send Heartbeat'}
+              Send Heartbeat
             </button>
           </div>
         </div>
